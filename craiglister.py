@@ -62,7 +62,10 @@ def clickClassImageUploader(listing):
 	listing.driver.find_element_by_id("classic").click()
 
 def clickListingType(listing):
-    listing.driver.find_element_by_xpath("//*[@id='pagecontainer']/section/form/blockquote//label[contains(.,'" + listing.type + "')]/input").click()
+	##this xpath wasn't working on my machine so I rewrote them
+	#listing.driver.find_element_by_xpath("//*[@id='pagecontainer']/section/form/blockquote//label[contains(.,'" + listing.type + "')]/input").click()
+	button = listing.driver.find_element_by_xpath("//*[contains(text(), 'for sale by owner')]")
+    	button.click()
 
 def clickListingCategory(listing):
     listing.driver.find_element_by_xpath("//*[@id='pagecontainer']/section/form/blockquote//label[contains(.,'" + listing.category + "')]/input").click()
