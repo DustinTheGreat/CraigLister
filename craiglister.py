@@ -8,12 +8,10 @@ import os
 import shutil
 from inspect import getsourcefile
 from os.path import abspath
-from gmail import Gmail
 from datetime import date
 from PIL import Image
 
-gmailUser = ""
-gmailPass = ""
+
 
 #--------------------------------------- Importing Stuff ----------------------
 
@@ -49,7 +47,9 @@ class listingInfoParse(object):
 #------------------------------  Driver Navigation -----------------
 
 def clickDoneOnImageUploading(listing):
-	listing.driver.find_element_by_xpath("//*[@id='pagecontainer']/section/form/button").click()
+    print("here")
+    listing.driver.find_element_by_xpath("//*[@id='page-container']/body/form/button").click() 
+    print('done')
 
 # Don't always have to do this
 def clickAbideByGuidelines(listing):
@@ -62,38 +62,41 @@ def clickClassImageUploader(listing):
 	listing.driver.find_element_by_id("classic").click()
 
 def clickListingType(listing):
-	##this xpath wasn't working on my machine so I rewrote them
-	#listing.driver.find_element_by_xpath("//*[@id='pagecontainer']/section/form/blockquote//label[contains(.,'" + listing.type + "')]/input").click()
-	button = listing.driver.find_element_by_xpath("//*[contains(text(), 'for sale by owner')]")
-    	button.click()
+
+    print('nothing')
+    listing_type_button = listing.driver.find_element_by_xpath("//*[contains(text(), 'for sale by owner')]")
+    listing_type_button.click()
+
+
 
 def clickListingCategory(listing):
-    listing.driver.find_element_by_xpath("//*[@id='pagecontainer']/section/form/blockquote//label[contains(.,'" + listing.category + "')]/input").click()
-
-def uploadImagePath(listing,image):
-	listing.driver.find_element_by_xpath(".//*[@id='uploader']/form/input[3]").send_keys(image)
+    category_button = listing.driver.find_element_by_xpath("//*[contains(text(), 'general for sale - by owner')]")
+    category_button.click()
 
 def fillOutListing(listing):
-    listing.driver.find_element_by_id("FromEMail").send_keys(listing.email)
-    listing.driver.find_element_by_id("ConfirmEMail").send_keys(listing.email)
-    listing.driver.find_element_by_id("PostingTitle").send_keys(listing.title)
-    listing.driver.find_element_by_id("postal_code").send_keys(listing.postal)
+    listing.driver.find_element_by_xpath("//input[@name='PostingTitle']").send_keys(listing.title)
+    listing.driver.find_element_by_xpath("//input[@name='postal']").send_keys(listing.postal)
+    listing.driver.find_element_by_xpath("//input[@name='FromEMail']").send_keys(listing.email)
+    listing.driver.find_element_by_xpath("//input[@name='ConfirmEMail']").send_keys(listing.email)
     listing.driver.find_element_by_id("PostingBody").send_keys(listing.body)
-    listing.driver.find_element_by_id("Ask").send_keys(listing.price)
-    listing.driver.find_element_by_xpath("//*[@id='postingForm']/button").click()
+    #listing.driver.find_element_by_xpath("//input[@name='Ask']").send_keys(listing.price)
+    #listing.driver.find_element_by_xpath("//*[@id='postingForm']/button").click()
+    listing.driver.find_element_by_xpath("//*[@type='submit']").click()
+
+def uploadImagePath(listing,image):
+    listing.driver.find_element_by_xpath(".//*[@id='uploader']/form/input[3]").send_keys(image)
 
 def fillOutGeolocation(listing):
     time.sleep(3)
     listing.driver.find_element_by_id("xstreet0").send_keys(listing.street)
     listing.driver.find_element_by_id("xstreet1").send_keys(listing.xstreet)
     listing.driver.find_element_by_id("city").send_keys(listing.city)
-    listing.driver.find_element_by_id("region").send_keys(listing.state)
+    #listing.driver.find_element_by_id("region").send_keys(listing.state)
     time.sleep(1)
-    listing.driver.find_element_by_id("search_button").click()
+    #listing.driver.find_element_by_id("search_button").click()
     time.sleep(2)
     #listing.driver.find_element_by_id("postal_code").send_keys(postal) #Should already be there
-    listing.driver.find_element_by_xpath("//*[@id='leafletForm']/button[1]").click()
-
+    listing.driver.find_element_by_xpath("//*[@type='submit']").submit()
 def removeImgExifData(path):
     filename, extension = os.path.splitext(path)
     fullFilename = filename+extension
@@ -106,19 +109,18 @@ def removeImgExifData(path):
     os.rename(filename + "copy" + extension,fullFilename)
 
 def uploadListingImages(listing):
-    clickClassImageUploader(listing)
-    for image in listing.images:
-        removeImgExifData(image)
-        uploadImagePath(listing,image)
-        time.sleep(5)
-    clickDoneOnImageUploading(listing)
-
+   # listing.driver.find_element_by_xpath("//form[1]").submit()
+    listing.driver.find_element_by_css_selector(".bigbutton").click()
+    #clickDoneOnImageUploading(listing)
+    # need to come back later and let the photos uploadnete
 def clickAcceptTerms(listing):
     listing.driver.find_element_by_xpath("//*[@id='pagecontainer']/section/section[1]//button[contains(.,'ACCEPT the terms of use')]").click()
 
 def clickPublishListing(listing):
-	listing.driver.find_element_by_xpath("//*[@id='pagecontainer']/section/div[1]/form/button[contains(.,'publish')]").click()
-
+    listing.driver.find_element_by_css_selector(".bigbutton").click()
+    ##remove this
+    listing.driver.close()x
+    
 def postListing(listing):
     clickListingType(listing)
     clickListingCategory(listing)
@@ -248,3 +250,4 @@ for listingFolder in listingFolders:
     time.sleep(120)
     print "Waiting 2 minutes"
 print "No More Craiglist Items To List"
+
