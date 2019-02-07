@@ -1,0 +1,4 @@
+from selenium import webdriver
+
+driver = webdriver.Chrome('/home/nsa/del/CraigLister/chromedriver')
+driver.get()https://post.craigslist.org/k/6nE5e2Ip6RG3ZaDeGXACuA/CIylF?s=cat
